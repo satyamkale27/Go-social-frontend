@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export function middleware(request: NextRequest) {
-  const authToken = request.cookies.get("access_token")?.value;
-  //   const isUser = !authToken;
-  const isUser = true;
+  const authToken = request.cookies.get("authToken")?.value;
+  const isUser = !!authToken;
+  // const isUser = true;
   // Define restricted routes for logged-in users
   const restrictedRoutes = ["/signup", "/signin"];
 
