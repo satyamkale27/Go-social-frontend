@@ -15,6 +15,7 @@ export function SignUpForm() {
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [loading, setLoading] = useState(false); // Loader state
   const router = useRouter();
 
   const validateEmail = (value: string) => {
@@ -49,6 +50,8 @@ export function SignUpForm() {
       return;
     }
 
+    setLoading(true); // Show loader
+
     try {
       const userDetails = { email, password, username }; // Add other required fields
       const response = await registerUser(userDetails); // Call registerUser function
@@ -71,6 +74,8 @@ export function SignUpForm() {
           description: "An unknown error occurred.",
         });
       }
+    } finally {
+      setLoading(false); // Hide loader
     }
   };
 
@@ -149,8 +154,33 @@ export function SignUpForm() {
             )}
           </div>
 
-          <Button className="w-full bg-cyan-500 hover:bg-cyan-600 text-white py-3">
-            Create Account
+          <Button
+            className="w-full bg-cyan-500 hover:bg-cyan-600 text-white py-3 flex items-center justify-center"
+            disabled={loading} // Disable button while loading
+          >
+            {loading ? (
+              <svg
+                className="animate-spin h-5 w-5 text-white mr-2"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+            ) : null}
+            {loading ? "Creating Account..." : "Create Account"}
           </Button>
         </form>
 

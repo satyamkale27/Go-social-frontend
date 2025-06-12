@@ -10,44 +10,8 @@ export function SignInForm() {
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [loading, setLoading] = useState(false); // Loader state
   const router = useRouter();
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Validate email and password before proceeding
-    if (emailError || passwordError) {
-      toast({
-        title: "Error",
-        description: "Please fix the validation errors before submitting.",
-      });
-      return;
-    }
-
-    try {
-      const token = await login(email, password); // Fetch token
-      setTokenInCookies(token); // Store token in cookies
-      router.push("/"); // Redirect to home
-      toast({
-        title: "Success",
-        description: "Logged in successfully!",
-      });
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        toast({
-          title: "Error",
-          description:
-            err.message ||
-            "Unable to log in. Please check your credentials and try again.",
-        });
-      } else {
-        toast({
-          title: "Error",
-          description: "An unknown error occurred.",
-        });
-      }
-    }
-  };
 
   const validateEmail = (value: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Basic email regex
@@ -66,6 +30,46 @@ export function SignInForm() {
       );
     } else {
       setPasswordError("");
+    }
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Validate email and password before proceeding
+    if (emailError || passwordError) {
+      toast({
+        title: "Error",
+        description: "Please fix the validation errors before submitting.",
+      });
+      return;
+    }
+
+    setLoading(true); // Show loader
+
+    try {
+      const token = await login(email, password); // Fetch token
+      setTokenInCookies(token); // Store token in cookies
+      router.push("/"); // Redirect to home
+      toast({
+        title: "Success",
+        description: "Logged in successfully!",
+      });
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        toast({
+          title: "Error",
+          description:
+            "Unable to log in. Please check your credentials and try again.",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "An unknown error occurred.",
+        });
+      }
+    } finally {
+      setLoading(false); // Hide loader
     }
   };
 
@@ -96,7 +100,7 @@ export function SignInForm() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               onBlur={(e) => validateEmail(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-500"
             />
             {emailError && <p className="text-red-500 text-sm">{emailError}</p>}
           </div>
@@ -115,7 +119,7 @@ export function SignInForm() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onBlur={(e) => validatePassword(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-500"
             />
             {passwordError && (
               <p className="text-red-500 text-sm">{passwordError}</p>
@@ -124,9 +128,32 @@ export function SignInForm() {
 
           <button
             type="submit"
-            className="w-full bg-cyan-500 hover:bg-cyan-600 text-white py-3 rounded-lg"
+            className="w-full bg-cyan-500 hover:bg-cyan-600 text-white py-3 rounded-lg flex items-center justify-center"
+            disabled={loading} // Disable button while loading
           >
-            Sign In
+            {loading ? (
+              <svg
+                className="animate-spin h-5 w-5 text-white mr-2"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+            ) : null}
+            {loading ? "Signing In..." : "Sign In"}
           </button>
         </form>
 
