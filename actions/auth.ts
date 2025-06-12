@@ -1,24 +1,44 @@
-export async function login(email: string, password: string): Promise<string> {
-  const response = await fetch(
-    "http://localhost:8080/v1/authentication/token",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    }
-  );
+import axios from "axios";
 
-  if (!response.ok) {
-    throw new Error("Invalid credentials");
+export const login = async (
+  email: string,
+  password: string
+): Promise<string> => {
+  try {
+    const response = await axios.post(
+      "http://localhost:8080/v1/authentication/token",
+      { email, password },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return response.data.data; // Assuming the API returns the token in `data.data`
+  } catch (error: any) {
+    throw error;
   }
+};
 
-  const data = await response.json();
-  console.log(data.data);
-  return data.data; // Assuming the API returns the token in `data.data`
-}
-
-export function setTokenInCookies(token: string): void {
+export const setTokenInCookies = (token: string): void => {
   document.cookie = `authToken=${token}; path=/; max-age=259200`; // Store token in cookies
-}
+};
+
+export const registerUser = async (userDetail: object): Promise<string> => {
+  try {
+    const response = await axios.post(
+      "http://localhost:8080/v1/authentication/user",
+      userDetail,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return response.data; // Assuming the API returns some data in `data.data`
+  } catch (error: any) {
+    throw error;
+  }
+};

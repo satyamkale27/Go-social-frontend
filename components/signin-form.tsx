@@ -3,25 +3,69 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { login, setTokenInCookies } from "@/actions/auth";
+import { toast } from "@/hooks/use-toast"; // Import the toast function
 
 export function SignInForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate email and password before proceeding
+    if (emailError || passwordError) {
+      toast({
+        title: "Error",
+        description: "Please fix the validation errors before submitting.",
+      });
+      return;
+    }
+
     try {
       const token = await login(email, password); // Fetch token
       setTokenInCookies(token); // Store token in cookies
       router.push("/"); // Redirect to home
+      toast({
+        title: "Success",
+        description: "Logged in successfully!",
+      });
     } catch (err: unknown) {
       if (err instanceof Error) {
-        setError(err.message);
+        toast({
+          title: "Error",
+          description:
+            err.message ||
+            "Unable to log in. Please check your credentials and try again.",
+        });
       } else {
-        setError("An unknown error occurred.");
+        toast({
+          title: "Error",
+          description: "An unknown error occurred.",
+        });
       }
+    }
+  };
+
+  const validateEmail = (value: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Basic email regex
+    if (!emailRegex.test(value)) {
+      setEmailError("Please enter a valid email address.");
+    } else {
+      setEmailError("");
+    }
+  };
+
+  const validatePassword = (value: string) => {
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/; // Minimum 8 characters, at least one letter and one number
+    if (!passwordRegex.test(value)) {
+      setPasswordError(
+        "Password must be at least 8 characters long and include a number."
+      );
+    } else {
+      setPasswordError("");
     }
   };
 
@@ -51,8 +95,10 @@ export function SignInForm() {
               placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              onBlur={(e) => validateEmail(e.target.value)}
               className="w-full border border-gray-300 rounded-lg px-3 py-2"
             />
+            {emailError && <p className="text-red-500 text-sm">{emailError}</p>}
           </div>
 
           <div>
@@ -68,11 +114,13 @@ export function SignInForm() {
               placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              onBlur={(e) => validatePassword(e.target.value)}
               className="w-full border border-gray-300 rounded-lg px-3 py-2"
             />
+            {passwordError && (
+              <p className="text-red-500 text-sm">{passwordError}</p>
+            )}
           </div>
-
-          {error && <p className="text-red-500 text-sm">{error}</p>}
 
           <button
             type="submit"
