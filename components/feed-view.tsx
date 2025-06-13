@@ -142,28 +142,6 @@ export function FeedView() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Content Filter
-                </label>
-                <Input
-                  placeholder="Filter by content"
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Since Date
-                </label>
-                <Input
-                  type="date"
-                  value={since}
-                  onChange={(e) => setSince(e.target.value)}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Posts per page
                 </label>
                 <Select
