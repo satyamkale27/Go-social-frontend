@@ -3,15 +3,13 @@
 import { useState, useEffect } from "react";
 import {
   Search,
-  ChevronDown,
-  Heart,
-  MessageCircle,
-  Share,
-  Bookmark,
-  HelpCircle,
   ChevronLeft,
   ChevronRight,
   Filter,
+  Bookmark,
+  Heart,
+  MessageCircle,
+  Share,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,8 +27,8 @@ export function FeedView() {
   const [tags, setTags] = useState("");
   const [content, setContent] = useState("");
   const [since, setSince] = useState("");
-  const [limit, setLimit] = useState("20");
-  const [offset, setOffset] = useState("0");
+  const [limit, setLimit] = useState(10); // Number of posts per page
+  const [offset, setOffset] = useState(0); // Offset for pagination
   const [showFilters, setShowFilters] = useState(false);
   type Post = {
     id: string | number;
@@ -42,9 +40,6 @@ export function FeedView() {
       avatar?: string;
       username?: string;
     };
-    bookmarked?: boolean;
-    likes?: number;
-    comment_count?: number;
   };
 
   const [posts, setPosts] = useState<Post[]>([]); // State to store fetched posts
@@ -79,7 +74,18 @@ export function FeedView() {
   // Fetch posts on initial load
   useEffect(() => {
     fetchPosts();
-  }, []);
+  }, [offset, limit]); // Refetch posts when offset or limit changes
+
+  // Pagination handlers
+  const handleNextPage = () => {
+    setOffset(offset + limit); // Increment offset by limit
+  };
+
+  const handlePreviousPage = () => {
+    if (offset - limit >= 0) {
+      setOffset(offset - limit); // Decrement offset by limit
+    }
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
@@ -132,33 +138,6 @@ export function FeedView() {
                   value={tags}
                   onChange={(e) => setTags(e.target.value)}
                 />
-
-                <div className="mt-3">
-                  <p className="text-sm font-medium text-gray-700 mb-2">
-                    Popular tags:
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {popularTags.map((tag) => (
-                      <button
-                        key={tag}
-                        onClick={() => {
-                          const currentTags = tags
-                            .split(",")
-                            .map((t) => t.trim())
-                            .filter(Boolean);
-                          if (!currentTags.includes(tag)) {
-                            setTags(
-                              currentTags.length > 0 ? `${tags}, ${tag}` : tag
-                            );
-                          }
-                        }}
-                        className="px-2 py-1 bg-cyan-100 text-cyan-700 rounded text-sm hover:bg-cyan-200 transition-colors"
-                      >
-                        {tag}
-                      </button>
-                    ))}
-                  </div>
-                </div>
               </div>
 
               <div>
@@ -188,8 +167,8 @@ export function FeedView() {
                   Posts per page
                 </label>
                 <Select
-                  value={limit}
-                  onValueChange={(value) => setLimit(value)}
+                  value={limit.toString()}
+                  onValueChange={(value) => setLimit(parseInt(value, 10))}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -253,13 +232,7 @@ export function FeedView() {
                       </div>
                     </div>
                     <Button variant="ghost" size="sm" className="flex-shrink-0">
-                      <Bookmark
-                        className={`h-4 w-4 ${
-                          post.bookmarked
-                            ? "fill-cyan-500 text-cyan-500"
-                            : "text-gray-400"
-                        }`}
-                      />
+                      <Bookmark className="h-4 w-4 text-gray-400" />
                     </Button>
                   </div>
 
@@ -270,47 +243,43 @@ export function FeedView() {
                     {post.content}
                   </p>
 
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
-                    <div className="flex flex-wrap gap-2">
-                      {post.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="px-2 py-1 bg-cyan-100 text-cyan-700 rounded text-xs sm:text-sm"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-
-                    <div className="flex items-center space-x-4 text-xs sm:text-sm text-gray-500">
-                      <button className="flex items-center space-x-1 hover:text-red-500 transition-colors">
-                        <Heart className="h-4 w-4" />
-                        <span>{post.likes || 0}</span>
-                      </button>
-                      <button className="flex items-center space-x-1 hover:text-blue-500 transition-colors">
-                        <MessageCircle className="h-4 w-4" />
-                        <span>{post.comment_count || 0}</span>
-                      </button>
-                      <button className="flex items-center space-x-1 hover:text-green-500 transition-colors">
-                        <Share className="h-4 w-4" />
-                      </button>
-                    </div>
+                  <div className="flex flex-wrap gap-2">
+                    {post.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="px-2 py-1 bg-cyan-100 text-cyan-700 rounded text-xs sm:text-sm"
+                      >
+                        {tag}
+                      </span>
+                    ))}
                   </div>
                 </div>
               ))}
             </div>
           )}
-        </div>
-      </div>
 
-      {/* Help Button */}
-      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6">
-        <Button
-          size="icon"
-          className="bg-blue-600 hover:bg-blue-700 rounded-full w-10 h-10 sm:w-12 sm:h-12 shadow-lg"
-        >
-          <HelpCircle className="h-5 w-5 sm:h-6 sm:w-6" />
-        </Button>
+          {/* Pagination */}
+          <div className="flex items-center justify-center space-x-2 mt-6 lg:mt-8">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handlePreviousPage}
+              disabled={offset === 0}
+            >
+              <ChevronLeft className="h-4 w-4" />
+              <span className="hidden sm:inline ml-1">Previous</span>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleNextPage}
+              disabled={posts.length < limit}
+            >
+              <span className="hidden sm:inline mr-1">Next</span>
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );
