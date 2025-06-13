@@ -219,11 +219,13 @@ export function FeedView() {
                     {post.title}
                   </h2>
                   <p className="text-gray-700 mb-4 text-sm sm:text-base leading-relaxed">
-                    {post.content}
+                    {post.content.length > 100
+                      ? `${post.content.substring(0, 100)}...`
+                      : post.content}
                   </p>
 
                   <div className="flex flex-wrap gap-2">
-                    {post.tags.map((tag) => (
+                    {post.tags.slice(0, 3).map((tag) => (
                       <span
                         key={tag}
                         className="px-2 py-1 bg-cyan-100 text-cyan-700 rounded text-xs sm:text-sm"
@@ -231,6 +233,11 @@ export function FeedView() {
                         {tag}
                       </span>
                     ))}
+                    {post.tags.length > 3 && (
+                      <span className="px-2 py-1 bg-gray-200 text-gray-600 rounded text-xs sm:text-sm">
+                        +{post.tags.length - 3} more
+                      </span>
+                    )}
                   </div>
                 </div>
               ))}
