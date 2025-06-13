@@ -196,7 +196,10 @@ export function FeedView() {
                     <div className="flex items-center space-x-3 min-w-0 flex-1">
                       <img
                         src={
-                          post.user.avatar || "https://via.placeholder.com/100"
+                          post.user.avatar ||
+                          `https://robohash.org/${
+                            post.user.username || "Anonymous"
+                          }.png?size=100x100`
                         }
                         alt={post.user.username || "User"}
                         className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover flex-shrink-0"
