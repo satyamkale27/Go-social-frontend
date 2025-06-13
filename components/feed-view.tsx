@@ -56,7 +56,8 @@ export function FeedView() {
         tags: tags
           .split(",")
           .map((tag) => tag.trim())
-          .filter(Boolean),
+          .filter((tag) => tag.length > 0)
+          .join(","),
         content,
         since,
         limit,
