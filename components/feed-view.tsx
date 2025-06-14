@@ -21,7 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { fetchUserFeed } from "@/actions/fetchFeed"; // Import the fetchUserFeed function
-
+import { toast } from "@/hooks/use-toast";
 export function FeedView() {
   const [search, setSearch] = useState("");
   const [tags, setTags] = useState("");
@@ -63,10 +63,16 @@ export function FeedView() {
         limit,
         offset,
       };
-      const response = await fetchUserFeed(params); // Fetch posts using API
-      setPosts(response.data); // Update posts state with fetched data
+      const response = await fetchUserFeed(params);
+      if (!response.data) throw new Error("Failed to fetch Feed");
+      setPosts(response.data);
     } catch (error) {
-      console.error("Error fetching posts:", error);
+      toast({
+        title: "Error",
+        description: `${
+          error instanceof Error ? error.message : "An unknown error occurred"
+        }`,
+      });
     } finally {
       setLoading(false);
     }
