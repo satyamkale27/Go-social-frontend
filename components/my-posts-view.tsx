@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getAllUserPosts } from "@/actions/fetchAllUserPosts";
+import { deleteUserPostById } from "@/actions/fetchAllUserPosts";
 import { toast } from "@/hooks/use-toast";
 
 type Post = {
@@ -62,6 +63,20 @@ export function MyPostsView() {
     fetchPosts();
   }, []);
 
+  const handleDeletePost = async (id: string) => {
+    try {
+      await deleteUserPostById(id);
+      setPosts((prevPosts) => prevPosts.filter((post) => post.id !== id));
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: `${
+          error instanceof Error ? error.message : "An unknown error occurred"
+        }`,
+      });
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
       <div className="mb-6 sm:mb-8">
@@ -94,7 +109,11 @@ export function MyPostsView() {
                 <Button variant="ghost" size="sm">
                   <ExternalLink className="h-4 w-4" />
                 </Button>
-                <Button variant="ghost" size="sm">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleDeletePost(post.id)}
+                >
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
