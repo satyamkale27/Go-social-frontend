@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Bookmark, Share, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { getPostById } from "@/actions/fetchAllUserPosts";
+import { followUserById, getPostById } from "@/actions/fetchAllUserPosts";
 import { toast } from "@/hooks/use-toast";
 
 export function BlogPostDetail({ id }: { id: string }) {
@@ -53,6 +53,21 @@ export function BlogPostDetail({ id }: { id: string }) {
       });
   };
 
+  const handleFollow = async (id: string) => {
+    try {
+      const response = await followUserById(id);
+      toast({
+        title: "Success",
+        description: "Followed successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: `Already Followed user`,
+      });
+    }
+  };
+
   if (!post) {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
@@ -88,7 +103,10 @@ export function BlogPostDetail({ id }: { id: string }) {
             </div>
           </div>
           <div className="flex items-center space-x-2 self-start sm:self-auto">
-            <Button className="bg-cyan-500 hover:bg-cyan-600 text-sm sm:text-base">
+            <Button
+              className="bg-cyan-500 hover:bg-cyan-600 text-sm sm:text-base"
+              onClick={() => handleFollow(post.user_id.toString())}
+            >
               Follow
             </Button>
             <Button variant="ghost" size="sm">

@@ -78,3 +78,29 @@ export const getPostById = async (id: string) => {
     throw error;
   }
 };
+
+export const followUserById = async (id: string) => {
+  try {
+    const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("authToken="))
+      ?.split("=")[1];
+
+    if (!token) {
+      throw new Error("Authorization token not found in cookies.");
+    }
+
+    const response = await axios.put(
+      `http://localhost:8080/v1/users/${id}/follow`,
+      {},
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+  } catch (error) {
+    throw error;
+  }
+};
