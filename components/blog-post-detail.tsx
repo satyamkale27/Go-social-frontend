@@ -41,6 +41,18 @@ export function BlogPostDetail({ id }: { id: string }) {
     fetchPost();
   }, [id]);
 
+  const handleShare = () => {
+    const url = `${window.location.origin}/my-posts/post/${id}`;
+    navigator.clipboard
+      .writeText(url)
+      .then(() => {
+        alert("URL copied to clipboard!");
+      })
+      .catch((err) => {
+        console.error("Failed to copy URL:", err);
+      });
+  };
+
   if (!post) {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
@@ -82,7 +94,7 @@ export function BlogPostDetail({ id }: { id: string }) {
             <Button variant="ghost" size="sm">
               <Bookmark className="h-4 w-4 text-gray-400" />
             </Button>
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" onClick={handleShare}>
               <Share className="h-4 w-4 text-gray-400" />
             </Button>
           </div>
