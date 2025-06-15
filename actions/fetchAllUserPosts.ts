@@ -53,3 +53,27 @@ export const deleteUserPostById = async (id: string) => {
     throw error;
   }
 };
+
+export const getPostById = async (id: string) => {
+  try {
+    const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("authToken="))
+      ?.split("=")[1];
+
+    if (!token) {
+      throw new Error("Authorization token not found in cookies.");
+    }
+
+    const response = await axios.get(`http://localhost:8080/v1/posts/${id}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (response.status != 204) throw new Error("Error in Fetching post");
+  } catch (error) {
+    throw error;
+  }
+};

@@ -1,12 +1,18 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Heart, MessageCircle, Share, Bookmark, HelpCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
+import { useState } from "react";
+import {
+  Heart,
+  MessageCircle,
+  Share,
+  Bookmark,
+  HelpCircle,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 
-export function BlogPostDetail() {
-  const [comment, setComment] = useState('');
+export function BlogPostDetail({ id }: { id: string }) {
+  const [comment, setComment] = useState("");
   const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [likes, setLikes] = useState(45);
@@ -28,7 +34,9 @@ export function BlogPostDetail() {
               className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover"
             />
             <div>
-              <h3 className="font-semibold text-gray-900 text-sm sm:text-base">User #166</h3>
+              <h3 className="font-semibold text-gray-900 text-sm sm:text-base">
+                User #166
+              </h3>
               <div className="flex items-center space-x-2 text-xs sm:text-sm text-gray-500">
                 <span>April 21, 2025</span>
                 <span>•</span>
@@ -37,12 +45,16 @@ export function BlogPostDetail() {
             </div>
           </div>
           <div className="flex items-center space-x-2 self-start sm:self-auto">
-            <Button 
-              variant="ghost" 
+            <Button
+              variant="ghost"
               size="sm"
               onClick={() => setIsBookmarked(!isBookmarked)}
             >
-              <Bookmark className={`h-4 w-4 ${isBookmarked ? 'fill-cyan-500 text-cyan-500' : 'text-gray-400'}`} />
+              <Bookmark
+                className={`h-4 w-4 ${
+                  isBookmarked ? "fill-cyan-500 text-cyan-500" : "text-gray-400"
+                }`}
+              />
             </Button>
             <Button variant="ghost" size="sm">
               <Share className="h-4 w-4 text-gray-400" />
@@ -51,7 +63,9 @@ export function BlogPostDetail() {
         </div>
 
         {/* Post Title */}
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight">Working with JSON in Go</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight">
+          Working with JSON in Go
+        </h1>
 
         {/* Tags */}
         <div className="flex flex-wrap gap-2 mb-6 sm:mb-8">
@@ -66,32 +80,39 @@ export function BlogPostDetail() {
         {/* Post Content */}
         <div className="prose max-w-none mb-6 sm:mb-8">
           <p className="text-gray-700 text-base sm:text-lg leading-relaxed mb-4 sm:mb-6">
-            This post introduces Go's built-in testing package and shows how to write and run unit tests.
+            This post introduces Go's built-in testing package and shows how to
+            write and run unit tests.
           </p>
 
           <div className="bg-cyan-50 border-l-4 border-cyan-400 p-4 sm:p-6 mb-4 sm:mb-6">
             <p className="text-gray-800 leading-relaxed text-sm sm:text-base">
-              JSON (JavaScript Object Notation) is a lightweight data-interchange format that's easy for 
-              humans to read and write. In Go, working with JSON is straightforward thanks to the built-in 
+              JSON (JavaScript Object Notation) is a lightweight
+              data-interchange format that's easy for humans to read and write.
+              In Go, working with JSON is straightforward thanks to the built-in
               encoding/json package.
             </p>
           </div>
 
           <p className="text-gray-700 leading-relaxed text-sm sm:text-base">
-            The encoding/json package provides functions to marshal Go data structures into JSON and 
-            unmarshal JSON into Go data structures. This makes it perfect for building APIs and handling 
-            configuration files.
+            The encoding/json package provides functions to marshal Go data
+            structures into JSON and unmarshal JSON into Go data structures.
+            This makes it perfect for building APIs and handling configuration
+            files.
           </p>
         </div>
 
         {/* Post Stats */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-4 border-t border-gray-200 space-y-3 sm:space-y-0">
           <div className="flex items-center space-x-4 sm:space-x-6">
-            <button 
+            <button
               onClick={handleLike}
               className="flex items-center space-x-2 text-gray-600 hover:text-red-500 transition-colors"
             >
-              <Heart className={`h-4 w-4 sm:h-5 sm:w-5 ${isLiked ? 'fill-red-500 text-red-500' : ''}`} />
+              <Heart
+                className={`h-4 w-4 sm:h-5 sm:w-5 ${
+                  isLiked ? "fill-red-500 text-red-500" : ""
+                }`}
+              />
               <span className="text-sm sm:text-base">{likes} likes</span>
             </button>
             <div className="flex items-center space-x-2 text-gray-600">
@@ -99,16 +120,16 @@ export function BlogPostDetail() {
               <span className="text-sm sm:text-base">12 comments</span>
             </div>
           </div>
-          <div className="text-xs sm:text-sm text-gray-500">
-            Post ID: #207
-          </div>
+          <div className="text-xs sm:text-sm text-gray-500">Post ID: #207</div>
         </div>
       </div>
 
       {/* Comments Section */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 lg:p-8 mt-4 sm:mt-6">
-        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">Comments</h2>
-        
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">
+          Comments
+        </h2>
+
         {/* Add Comment */}
         <div className="flex items-start space-x-3 mb-4 sm:mb-6">
           <img
