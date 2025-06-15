@@ -3,9 +3,9 @@
 import { useState, useEffect } from "react";
 import { Bookmark, Share, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { followUserById, getPostById } from "@/actions/fetchAllUserPosts";
 import { toast } from "@/hooks/use-toast";
+import ReactMarkdown from "react-markdown"; // <-- imported react-markdown
 
 export function BlogPostDetail({ id }: { id: string }) {
   const [post, setPost] = useState<{
@@ -139,10 +139,8 @@ export function BlogPostDetail({ id }: { id: string }) {
         </div>
 
         {/* Post Content */}
-        <div className="prose max-w-none mb-6 sm:mb-8">
-          <p className="text-gray-700 text-base sm:text-lg leading-relaxed mb-4 sm:mb-6">
-            {post.content}
-          </p>
+        <div className="prose max-w-none mb-6 sm:mb-8 text-gray-700 text-base sm:text-lg leading-relaxed">
+          <ReactMarkdown>{post.content}</ReactMarkdown>
         </div>
       </div>
 
