@@ -109,9 +109,6 @@ export function BlogPostDetail({ id }: { id: string }) {
             >
               Follow
             </Button>
-            <Button variant="ghost" size="sm">
-              <Bookmark className="h-4 w-4 text-gray-400" />
-            </Button>
             <Button variant="ghost" size="sm" onClick={handleShare}>
               <Share className="h-4 w-4 text-gray-400" />
             </Button>
