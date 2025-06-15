@@ -104,3 +104,32 @@ export const followUserById = async (id: string) => {
     throw error;
   }
 };
+
+export const createComment = async (id: string, content: string) => {
+  try {
+    const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("authToken="))
+      ?.split("=")[1];
+
+    if (!token) {
+      throw new Error("Authorization token not found in cookies.");
+    }
+
+    const response = await axios.post(
+      `http://localhost:8080/v1/posts/${id}/comment`,
+      { content },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (response.status != 201) throw new Error("Error in creating comment");
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

@@ -3,7 +3,11 @@
 import { useState, useEffect } from "react";
 import { Bookmark, Share, HelpCircle, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { followUserById, getPostById } from "@/actions/fetchAllUserPosts";
+import {
+  followUserById,
+  getPostById,
+  createComment,
+} from "@/actions/fetchAllUserPosts";
 import { toast } from "@/hooks/use-toast";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -13,25 +17,23 @@ import { Light as SyntaxHighlighter } from "react-syntax-highlighter";
 import js from "react-syntax-highlighter/dist/esm/languages/hljs/javascript";
 import github from "react-syntax-highlighter/dist/esm/styles/hljs/github";
 
-// register language
 SyntaxHighlighter.registerLanguage("javascript", js);
 
+type Comment = {
+  username: string;
+  content: string;
+  created_at: string;
+};
+
 type Post = {
+  id: string;
   user_id: string | number;
   created_at: string;
   version: string | number;
   title: string;
   tags?: string[];
   content: string;
-  comment: string[]; // Added comment field
-};
-type Comment = {
-  id: string | number;
-  user: {
-    username: string;
-  };
-  content: string;
-  created_at: string;
+  comment: Comment[];
 };
 
 export function BlogPostDetail({ id }: { id: string }) {
@@ -39,35 +41,36 @@ export function BlogPostDetail({ id }: { id: string }) {
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState<string>("");
 
-  useEffect(() => {
-    const fetchPost = async () => {
-      try {
-        const data = await getPostById(id);
-        if (data?.data) {
-          setPost(data.data);
-          setComments(data.data.comment || []);
-        } else {
-          throw new Error("No post data returned");
-        }
-      } catch (error) {
-        toast({ title: "Error", description: `${error}` });
+  const fetchPost = async () => {
+    try {
+      const data = await getPostById(id);
+      if (data?.data) {
+        setPost(data.data);
+        setComments(data.data.comment || []);
+      } else {
+        throw new Error("No post data returned");
       }
-    };
+    } catch (error) {
+      toast({ title: "Error", description: `${error}` });
+    }
+  };
+
+  useEffect(() => {
     fetchPost();
   }, [id]);
 
-  const handleAddComment = () => {
-    if (newComment.trim()) {
-      setComments((prevComments) => [
-        ...prevComments,
-        {
-          id: Date.now(),
-          user: { username: "You" },
-          content: newComment,
-          created_at: new Date().toISOString(),
-        },
-      ]);
+  const handleAddComment = async () => {
+    if (!newComment.trim()) return;
+
+    try {
+      await createComment(post.id, newComment);
+
+      // re-fetch fresh comments
+      await fetchPost();
       setNewComment("");
+      toast({ title: "Success", description: "Comment added successfully" });
+    } catch (error) {
+      toast({ title: "Error", description: "Failed to add comment" });
     }
   };
 
@@ -79,9 +82,9 @@ export function BlogPostDetail({ id }: { id: string }) {
       .catch((err) => console.error("Failed to copy URL:", err));
   };
 
-  const handleFollow = async (id: string) => {
+  const handleFollow = async () => {
     try {
-      await followUserById(id);
+      await followUserById(post.user_id.toString());
       toast({ title: "Success", description: "Followed successfully" });
     } catch {
       toast({ title: "Error", description: "Already Followed user" });
@@ -107,12 +110,10 @@ export function BlogPostDetail({ id }: { id: string }) {
       components={{
         code({ className, children }) {
           const language = className?.replace("language-", "") || "plaintext";
-
           const handleCopy = () => {
             navigator.clipboard.writeText(String(children));
             toast({ title: "Copied", description: "Code copied to clipboard" });
           };
-
           return (
             <div className="relative my-4">
               <button
@@ -152,7 +153,6 @@ export function BlogPostDetail({ id }: { id: string }) {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 sm:p-8">
-        {/* Header */}
         <div className="flex justify-between items-start mb-6">
           <div className="flex items-center space-x-3">
             <img
@@ -171,10 +171,7 @@ export function BlogPostDetail({ id }: { id: string }) {
             </div>
           </div>
           <div className="flex space-x-2">
-            <Button
-              className="bg-cyan-500"
-              onClick={() => handleFollow(post.user_id.toString())}
-            >
+            <Button className="bg-cyan-500" onClick={handleFollow}>
               Follow
             </Button>
             <Button variant="ghost" size="sm" onClick={handleShare}>
@@ -183,10 +180,8 @@ export function BlogPostDetail({ id }: { id: string }) {
           </div>
         </div>
 
-        {/* Title */}
         <h1 className="text-3xl font-bold text-gray-900 mb-6">{post.title}</h1>
 
-        {/* Tags */}
         <div className="flex flex-wrap gap-2 mb-8">
           {post.tags?.map((tag) => (
             <span
@@ -198,23 +193,21 @@ export function BlogPostDetail({ id }: { id: string }) {
           ))}
         </div>
 
-        {/* Content */}
         <div className="prose max-w-none text-gray-700">
           <MarkdownRender />
         </div>
 
-        {/* Comments Section */}
         <div className="mt-8">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">Comments</h2>
           <div className="space-y-4">
             {comments.length > 0 ? (
-              comments.map((comment) => (
+              comments.map((comment, index) => (
                 <div
-                  key={comment.id}
+                  key={index}
                   className="bg-gray-100 rounded-lg p-3 text-gray-700 text-sm"
                 >
                   <p className="font-semibold text-gray-900">
-                    {comment.user.username}
+                    {comment.username}
                   </p>
                   <p className="text-gray-700">{comment.content}</p>
                   <p className="text-gray-500 text-xs">
@@ -228,6 +221,7 @@ export function BlogPostDetail({ id }: { id: string }) {
               </p>
             )}
           </div>
+
           <div className="mt-4">
             <textarea
               value={newComment}
@@ -245,7 +239,6 @@ export function BlogPostDetail({ id }: { id: string }) {
         </div>
       </div>
 
-      {/* Help Button */}
       <div className="fixed bottom-4 right-4">
         <Button
           size="icon"
