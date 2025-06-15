@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { getAllUserPosts } from "@/actions/fetchAllUserPosts";
 import { deleteUserPostById } from "@/actions/fetchAllUserPosts";
 import { toast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 
 type Post = {
   id: string;
@@ -25,6 +26,7 @@ type Post = {
 
 export function MyPostsView() {
   const [posts, setPosts] = useState<Post[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -76,6 +78,9 @@ export function MyPostsView() {
       });
     }
   };
+  const handleViewDetails = (id: string) => {
+    router.push(`/my-posts/post/${id}`);
+  };
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
@@ -106,9 +111,6 @@ export function MyPostsView() {
                 {post.title}
               </h3>
               <div className="flex items-center space-x-2 flex-shrink-0">
-                <Button variant="ghost" size="sm">
-                  <ExternalLink className="h-4 w-4" />
-                </Button>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -149,6 +151,7 @@ export function MyPostsView() {
               <Button
                 variant="outline"
                 className="text-cyan-600 border-cyan-200 hover:bg-cyan-50 w-full sm:w-auto"
+                onClick={() => handleViewDetails(post.id)}
               >
                 View Details
               </Button>
