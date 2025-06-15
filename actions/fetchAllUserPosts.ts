@@ -72,7 +72,8 @@ export const getPostById = async (id: string) => {
       },
     });
 
-    if (response.status != 204) throw new Error("Error in Fetching post");
+    if (response.status != 200) throw new Error("Error in Fetching post");
+    return response.data;
   } catch (error) {
     throw error;
   }
