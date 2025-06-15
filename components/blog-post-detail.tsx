@@ -23,11 +23,21 @@ type Post = {
   title: string;
   tags?: string[];
   content: string;
-  // Add any other fields returned by getPostById
+  comment: string[]; // Added comment field
+};
+type Comment = {
+  id: string | number;
+  user: {
+    username: string;
+  };
+  content: string;
+  created_at: string;
 };
 
 export function BlogPostDetail({ id }: { id: string }) {
   const [post, setPost] = useState<Post | null>(null);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [newComment, setNewComment] = useState<string>("");
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -35,6 +45,7 @@ export function BlogPostDetail({ id }: { id: string }) {
         const data = await getPostById(id);
         if (data?.data) {
           setPost(data.data);
+          setComments(data.data.comment || []);
         } else {
           throw new Error("No post data returned");
         }
@@ -44,6 +55,21 @@ export function BlogPostDetail({ id }: { id: string }) {
     };
     fetchPost();
   }, [id]);
+
+  const handleAddComment = () => {
+    if (newComment.trim()) {
+      setComments((prevComments) => [
+        ...prevComments,
+        {
+          id: Date.now(),
+          user: { username: "You" },
+          content: newComment,
+          created_at: new Date().toISOString(),
+        },
+      ]);
+      setNewComment("");
+    }
+  };
 
   const handleShare = () => {
     const url = `${window.location.origin}/my-posts/post/${id}`;
@@ -175,6 +201,47 @@ export function BlogPostDetail({ id }: { id: string }) {
         {/* Content */}
         <div className="prose max-w-none text-gray-700">
           <MarkdownRender />
+        </div>
+
+        {/* Comments Section */}
+        <div className="mt-8">
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">Comments</h2>
+          <div className="space-y-4">
+            {comments.length > 0 ? (
+              comments.map((comment) => (
+                <div
+                  key={comment.id}
+                  className="bg-gray-100 rounded-lg p-3 text-gray-700 text-sm"
+                >
+                  <p className="font-semibold text-gray-900">
+                    {comment.user.username}
+                  </p>
+                  <p className="text-gray-700">{comment.content}</p>
+                  <p className="text-gray-500 text-xs">
+                    {new Date(comment.created_at).toLocaleString()}
+                  </p>
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-500 text-sm">
+                No comments yet. Be the first to comment!
+              </p>
+            )}
+          </div>
+          <div className="mt-4">
+            <textarea
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              placeholder="Write a comment..."
+              className="w-full border border-gray-300 rounded-lg p-3 text-gray-700 text-sm"
+            />
+            <Button
+              className="mt-2 bg-cyan-500 hover:bg-cyan-600 text-sm"
+              onClick={handleAddComment}
+            >
+              Add Comment
+            </Button>
+          </div>
         </div>
       </div>
 
