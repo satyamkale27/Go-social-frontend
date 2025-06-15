@@ -76,6 +76,9 @@ export function BlogPostDetail({ id }: { id: string }) {
             </div>
           </div>
           <div className="flex items-center space-x-2 self-start sm:self-auto">
+            <Button className="bg-cyan-500 hover:bg-cyan-600 text-sm sm:text-base">
+              Follow
+            </Button>
             <Button variant="ghost" size="sm">
               <Bookmark className="h-4 w-4 text-gray-400" />
             </Button>
@@ -113,13 +116,6 @@ export function BlogPostDetail({ id }: { id: string }) {
           <p className="text-gray-700 text-base sm:text-lg leading-relaxed mb-4 sm:mb-6">
             {post.content}
           </p>
-        </div>
-
-        {/* Follow Button */}
-        <div className="flex justify-end">
-          <Button className="bg-cyan-500 hover:bg-cyan-600 text-sm sm:text-base">
-            Follow
-          </Button>
         </div>
       </div>
 
