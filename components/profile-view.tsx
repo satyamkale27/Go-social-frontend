@@ -23,7 +23,15 @@ export function ProfileView() {
   const handelGetUserById = async (id: string) => {
     try {
       const response = await getUserById(id);
-      console.log("dataaa is", response);
+      const roleid = response.data.role.id;
+
+      setUser({
+        id: response.data.id,
+        username: response.data.username,
+        email: response.data.email,
+        created_at: response.data.created_at,
+        roleid: roleid,
+      });
       if (!response) throw new Error("failed to fetch user");
       toast({
         title: "success",
@@ -36,6 +44,16 @@ export function ProfileView() {
       });
     }
   };
+
+  function formatDate(dateString: string) {
+    const date = new Date(dateString);
+    const options: Intl.DateTimeFormatOptions = {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    };
+    return new Intl.DateTimeFormat("en-US", options).format(date);
+  }
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
@@ -62,16 +80,18 @@ export function ProfileView() {
               </div>
               <div>
                 <h2 className="text-lg sm:text-xl font-bold text-gray-900">
-                  ayushdixit
+                  {user.username}
                 </h2>
                 <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 text-sm text-gray-600 mt-1 space-y-1 sm:space-y-0">
                   <div className="flex items-center space-x-1">
                     <Mail className="h-4 w-4" />
-                    <span className="break-all">fsayush100@gmail.com</span>
+                    <span className="break-all">{user.email}</span>
                   </div>
                   <div className="flex items-center space-x-1">
                     <Calendar className="h-4 w-4" />
-                    <span>Member since May 23, 2025</span>
+                    <span>
+                      {user.created_at ? formatDate(user.created_at) : "N/A"}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -90,11 +110,11 @@ export function ProfileView() {
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">User ID</span>
-                  <span className="font-medium">229</span>
+                  <span className="font-medium">{user.id}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">Role ID</span>
-                  <span className="font-medium">User</span>
+                  <span className="font-medium">{user.roleid}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">Account Status</span>
