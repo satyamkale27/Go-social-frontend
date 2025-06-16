@@ -69,9 +69,7 @@ export function FeedView() {
     } catch (error) {
       toast({
         title: "Error",
-        description: `${
-          error instanceof Error ? error.message : "An unknown error occurred"
-        }`,
+        description: "Not enough posts",
       });
     } finally {
       setLoading(false);

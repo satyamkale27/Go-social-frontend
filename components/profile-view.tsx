@@ -44,10 +44,6 @@ export function ProfileView() {
         roleid: roleid,
       });
       if (!response) throw new Error("failed to fetch user");
-      toast({
-        title: "success",
-        description: "user fetched successfully",
-      });
     } catch (error) {
       toast({
         title: "error",
@@ -64,6 +60,19 @@ export function ProfileView() {
       year: "numeric",
     };
     return new Intl.DateTimeFormat("en-US", options).format(date);
+  }
+  function calculateAccountAge(createdAt: string) {
+    const createdDate = new Date(createdAt);
+    const currentDate = new Date();
+
+    const differenceInMilliseconds =
+      currentDate.getTime() - createdDate.getTime();
+
+    const differenceInDays = Math.floor(
+      differenceInMilliseconds / (1000 * 60 * 60 * 24)
+    );
+
+    return differenceInDays;
   }
 
   const fetchPosts = async () => {
@@ -180,7 +189,12 @@ export function ProfileView() {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">Account Age</span>
-                  <span className="font-medium">16 days</span>
+                  <span className="font-medium">
+                    {user.created_at
+                      ? calculateAccountAge(user.created_at)
+                      : "N/A"}{" "}
+                    days
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">Last Activity</span>
