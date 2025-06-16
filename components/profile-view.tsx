@@ -3,8 +3,17 @@
 import { User, Mail, Calendar, Edit, LogOut, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { getUserById } from "@/actions/fetchAllUserPosts";
+import { getAllUserPosts, getUserById } from "@/actions/fetchAllUserPosts";
 import { toast } from "@/hooks/use-toast";
+
+type Post = {
+  id: string;
+  title: string;
+  date: string;
+  version: string;
+  description: string;
+  tags: string[];
+};
 
 export function ProfileView() {
   type user = {
@@ -15,9 +24,11 @@ export function ProfileView() {
     roleid?: string;
   };
   const [user, setUser] = useState<user>({});
+  const [posts, setPosts] = useState<Post[]>([]);
 
   useEffect(() => {
     handelGetUserById("241");
+    fetchPosts();
   }, []);
 
   const handelGetUserById = async (id: string) => {
@@ -55,9 +66,42 @@ export function ProfileView() {
     return new Intl.DateTimeFormat("en-US", options).format(date);
   }
 
+  const fetchPosts = async () => {
+    try {
+      const response = await getAllUserPosts();
+
+      const postsData = response.data;
+
+      if (Array.isArray(postsData)) {
+        setPosts(
+          postsData.map((post) => ({
+            id: post.id,
+            title: post.title,
+            date: new Date(post.created_at).toLocaleDateString(),
+            version: `v${post.version}`,
+            description: post.content.substring(0, 150) + "...",
+            tags: post.tags,
+          }))
+        );
+      } else {
+        toast({
+          title: "Error",
+          description: "Unexpected response format from the server.",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: `${
+          error instanceof Error ? error.message : "An unknown error occurred"
+        }`,
+      });
+    }
+  };
+
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
-      <div className="mb-6 sm:mb-8">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8 ">
+      <div className="mb-6 sm:mb-8 ">
         <div className="flex items-center space-x-3 mb-4 sm:mb-6">
           <div className="w-10 h-10 sm:w-12 sm:h-12 bg-cyan-500 rounded-lg flex items-center justify-center">
             <User className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
@@ -130,7 +174,9 @@ export function ProfileView() {
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">Total Posts</span>
-                  <span className="font-medium text-cyan-600">12</span>
+                  <span className="font-medium text-cyan-600">
+                    {posts.length}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">Account Age</span>
