@@ -1,30 +1,79 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { ArrowLeft, Hash, Edit3, Eye, Save, Send, HelpCircle } from 'lucide-react';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { useState } from "react";
+import {
+  ArrowLeft,
+  Hash,
+  Edit3,
+  Eye,
+  Save,
+  Send,
+  HelpCircle,
+} from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { createPost } from "@/actions/fetchAllUserPosts";
+import { toast } from "@/hooks/use-toast";
 
 export function CreatePostForm() {
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [tags, setTags] = useState('');
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [tags, setTags] = useState("");
+  console.log(tags);
 
-  const popularTags = ['go', 'backend', 'api', 'tutorial', 'beginner', 'testing'];
+  const createPostHandler = async () => {
+    try {
+      const payload = {
+        title: title,
+        content: content,
+        tags: tags
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter((tag) => tag !== ""),
+      };
+
+      const response = createPost(payload);
+      if (!response) throw new Error("Error in creating post");
+      toast({
+        title: "success",
+        description: "Post created",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: `${error}`,
+      });
+    }
+  };
+
+  const popularTags = [
+    "go",
+    "backend",
+    "api",
+    "tutorial",
+    "beginner",
+    "testing",
+  ];
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
       <div className="mb-4 sm:mb-6">
         <div className="flex items-center space-x-2 text-sm text-gray-600 mb-4">
-          <Link href="/" className="hover:text-cyan-600">Home</Link>
+          <Link href="/" className="hover:text-cyan-600">
+            Home
+          </Link>
           <span>›</span>
           <span>Create Post</span>
         </div>
-        
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Create New Post</h1>
-        <p className="text-gray-600 text-sm sm:text-base">Share your Go programming knowledge with the community</p>
+
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+          Create New Post
+        </h1>
+        <p className="text-gray-600 text-sm sm:text-base">
+          Share your Go programming knowledge with the community
+        </p>
       </div>
 
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 space-y-4 sm:space-y-6">
@@ -39,7 +88,9 @@ export function CreatePostForm() {
             onChange={(e) => setTitle(e.target.value)}
             className="text-base sm:text-lg"
           />
-          <p className="text-sm text-gray-500 mt-2">Choose a clear, descriptive title for your post</p>
+          <p className="text-sm text-gray-500 mt-2">
+            Choose a clear, descriptive title for your post
+          </p>
         </div>
 
         <div>
@@ -69,16 +120,23 @@ export function CreatePostForm() {
             onChange={(e) => setTags(e.target.value)}
             className="text-sm sm:text-base"
           />
-          <p className="text-sm text-gray-500 mt-2">Add relevant tags to help others discover your post</p>
-          
+          <p className="text-sm text-gray-500 mt-2">
+            Add relevant tags to help others discover your post
+          </p>
+
           <div className="mt-4">
-            <p className="text-sm font-medium text-gray-700 mb-2">Popular tags:</p>
+            <p className="text-sm font-medium text-gray-700 mb-2">
+              Popular tags:
+            </p>
             <div className="flex flex-wrap gap-2">
               {popularTags.map((tag) => (
                 <button
                   key={tag}
                   onClick={() => {
-                    const currentTags = tags.split(',').map(t => t.trim()).filter(Boolean);
+                    const currentTags = tags
+                      .split(",")
+                      .map((t) => t.trim())
+                      .filter(Boolean);
                     if (!currentTags.includes(tag)) {
                       setTags(currentTags.length > 0 ? `${tags}, ${tag}` : tag);
                     }
@@ -93,32 +151,16 @@ export function CreatePostForm() {
         </div>
 
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-4 sm:pt-6 border-t border-gray-200 space-y-3 sm:space-y-0">
-          <Button variant="outline" className="flex items-center justify-center space-x-2 w-full sm:w-auto">
-            <Eye className="h-4 w-4" />
-            <span>Preview</span>
-          </Button>
-          
           <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-3">
-            <Button variant="outline" className="flex items-center justify-center space-x-2 w-full sm:w-auto">
-              <Save className="h-4 w-4" />
-              <span>Save Draft</span>
-            </Button>
-            <Button className="bg-cyan-500 hover:bg-cyan-600 flex items-center justify-center space-x-2 w-full sm:w-auto">
+            <Button
+              className="bg-cyan-500 hover:bg-cyan-600 flex items-center justify-center space-x-2 w-full sm:w-auto"
+              onClick={createPostHandler}
+            >
               <Send className="h-4 w-4" />
               <span>Publish Post</span>
             </Button>
           </div>
         </div>
-      </div>
-
-      {/* Help Button */}
-      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6">
-        <Button
-          size="icon"
-          className="bg-blue-600 hover:bg-blue-700 rounded-full w-10 h-10 sm:w-12 sm:h-12 shadow-lg"
-        >
-          <HelpCircle className="h-5 w-5 sm:h-6 sm:w-6" />
-        </Button>
       </div>
     </div>
   );
