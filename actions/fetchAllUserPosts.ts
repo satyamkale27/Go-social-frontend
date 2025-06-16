@@ -162,3 +162,32 @@ export const createPost = async (content: object) => {
     throw error;
   }
 };
+
+export const getUserById = async (id: string) => {
+  try {
+    const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("authToken="))
+      ?.split("=")[1];
+
+    if (!token) {
+      throw new Error("Authorization token not found in cookies.");
+    }
+
+    const response = await axios.get(
+      `http://localhost:8080/v1/users/${id}`,
+
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (response.status != 200) throw new Error("Error in fetching Post");
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

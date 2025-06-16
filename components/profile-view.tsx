@@ -1,9 +1,42 @@
-'use client';
+"use client";
 
-import { User, Mail, Calendar, Edit, LogOut, HelpCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { User, Mail, Calendar, Edit, LogOut, HelpCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
+import { getUserById } from "@/actions/fetchAllUserPosts";
+import { toast } from "@/hooks/use-toast";
 
 export function ProfileView() {
+  type user = {
+    id?: string;
+    username?: string;
+    email?: string;
+    created_at?: string;
+    roleid?: string;
+  };
+  const [user, setUser] = useState<user>({});
+
+  useEffect(() => {
+    handelGetUserById("241");
+  }, []);
+
+  const handelGetUserById = async (id: string) => {
+    try {
+      const response = await getUserById(id);
+      console.log("dataaa is", response);
+      if (!response) throw new Error("failed to fetch user");
+      toast({
+        title: "success",
+        description: "user fetched successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "error",
+        description: `${error}`,
+      });
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
       <div className="mb-6 sm:mb-8">
@@ -12,8 +45,12 @@ export function ProfileView() {
             <User className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
           </div>
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Profile</h1>
-            <p className="text-gray-600 text-sm sm:text-base">Manage your account settings and information</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
+              Profile
+            </h1>
+            <p className="text-gray-600 text-sm sm:text-base">
+              Manage your account settings and information
+            </p>
           </div>
         </div>
 
@@ -24,7 +61,9 @@ export function ProfileView() {
                 <User className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
               </div>
               <div>
-                <h2 className="text-lg sm:text-xl font-bold text-gray-900">ayushdixit</h2>
+                <h2 className="text-lg sm:text-xl font-bold text-gray-900">
+                  ayushdixit
+                </h2>
                 <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 text-sm text-gray-600 mt-1 space-y-1 sm:space-y-0">
                   <div className="flex items-center space-x-1">
                     <Mail className="h-4 w-4" />
@@ -45,7 +84,9 @@ export function ProfileView() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Account Information</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Account Information
+              </h3>
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">User ID</span>
@@ -63,7 +104,9 @@ export function ProfileView() {
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Account Statistics</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Account Statistics
+              </h3>
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">Total Posts</span>
@@ -83,30 +126,23 @@ export function ProfileView() {
         </div>
 
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 mt-4 sm:mt-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">Account Actions</h3>
-          <p className="text-gray-600 mb-4 sm:mb-6 text-sm sm:text-base">Manage your account settings and preferences</p>
-          
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            Account Actions
+          </h3>
+          <p className="text-gray-600 mb-4 sm:mb-6 text-sm sm:text-base">
+            Manage your account settings and preferences
+          </p>
+
           <div className="flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 sm:space-x-3">
-            <Button className="bg-cyan-500 hover:bg-cyan-600 flex items-center space-x-2 w-full sm:w-auto">
-              <Edit className="h-4 w-4" />
-              <span>Edit Profile</span>
-            </Button>
-            <Button variant="destructive" className="flex items-center space-x-2 w-full sm:w-auto">
+            <Button
+              variant="destructive"
+              className="flex items-center space-x-2 w-full sm:w-auto"
+            >
               <LogOut className="h-4 w-4" />
               <span>Logout</span>
             </Button>
           </div>
         </div>
-      </div>
-
-      {/* Help Button */}
-      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6">
-        <Button
-          size="icon"
-          className="bg-blue-600 hover:bg-blue-700 rounded-full w-10 h-10 sm:w-12 sm:h-12 shadow-lg"
-        >
-          <HelpCircle className="h-5 w-5 sm:h-6 sm:w-6" />
-        </Button>
       </div>
     </div>
   );

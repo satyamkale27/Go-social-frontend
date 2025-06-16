@@ -42,7 +42,6 @@ export function CreatePostForm() {
         );
       }
 
-      // Validation for tags
       const tagsArray = tags
         .split(",")
         .map((tag) => tag.trim())
