@@ -21,20 +21,48 @@ export function CreatePostForm() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [tags, setTags] = useState("");
-  console.log(tags);
 
   const createPostHandler = async () => {
     try {
+      // Validation for title
+      if (!title.trim()) {
+        throw new Error("Title is required");
+      }
+      if (title.length > 100) {
+        throw new Error("Title must be less than or equal to 100 characters");
+      }
+
+      // Validation for content
+      if (!content.trim()) {
+        throw new Error("Content is required");
+      }
+      if (content.length > 4000) {
+        throw new Error(
+          "Content must be less than or equal to 4000 characters"
+        );
+      }
+
+      // Validation for tags
+      const tagsArray = tags
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter((tag) => tag !== "");
+
+      if (tagsArray.length === 0) {
+        throw new Error("At least one tag is required");
+      }
+
+      if (tagsArray.length > 4) {
+        throw new Error("You can add maximum 4 tags");
+      }
+
       const payload = {
         title: title,
         content: content,
-        tags: tags
-          .split(",")
-          .map((tag) => tag.trim())
-          .filter((tag) => tag !== ""),
+        tags: tagsArray,
       };
 
-      const response = createPost(payload);
+      const response = await createPost(payload);
       if (!response) throw new Error("Error in creating post");
       toast({
         title: "success",
@@ -45,6 +73,10 @@ export function CreatePostForm() {
         title: "Error",
         description: `${error}`,
       });
+    } finally {
+      setContent("");
+      setTitle("");
+      setTags("");
     }
   };
 
