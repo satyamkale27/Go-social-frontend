@@ -22,6 +22,8 @@ import {
 } from "@/components/ui/select";
 import { fetchUserFeed } from "@/actions/fetchFeed"; // Import the fetchUserFeed function
 import { toast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
+
 export function FeedView() {
   const [search, setSearch] = useState("");
   const [tags, setTags] = useState("");
@@ -30,6 +32,7 @@ export function FeedView() {
   const [limit, setLimit] = useState(10); // Number of posts per page
   const [offset, setOffset] = useState(0); // Offset for pagination
   const [showFilters, setShowFilters] = useState(false);
+  const router = useRouter();
   type Post = {
     id: string | number;
     title: string;
@@ -79,17 +82,20 @@ export function FeedView() {
   // Fetch posts on initial load
   useEffect(() => {
     fetchPosts();
-  }, [offset, limit]); // Refetch posts when offset or limit changes
+  }, [offset, limit]);
 
   // Pagination handlers
   const handleNextPage = () => {
-    setOffset(offset + limit); // Increment offset by limit
+    setOffset(offset + limit);
   };
 
   const handlePreviousPage = () => {
     if (offset - limit >= 0) {
-      setOffset(offset - limit); // Decrement offset by limit
+      setOffset(offset - limit);
     }
+  };
+  const handleViewDetails = (id: string) => {
+    router.push(`/my-posts/post/${id}`);
   };
 
   return (
@@ -217,8 +223,16 @@ export function FeedView() {
                         </p>
                       </div>
                     </div>
-                    <Button variant="ghost" size="sm" className="flex-shrink-0">
+                    {/* <Button variant="ghost" size="sm" className="flex-shrink-0">
                       <Bookmark className="h-4 w-4 text-gray-400" />
+                    </Button> */}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="flex-shrink-0"
+                      onClick={() => handleViewDetails(post.id.toString())}
+                    >
+                      <ChevronRight className="h-4 w-4 text-gray-400" />
                     </Button>
                   </div>
 
