@@ -102,7 +102,6 @@ export function BlogPostDetail({ id }: { id: string }) {
       </div>
     );
   }
-
   const MarkdownRender = () => (
     <ReactMarkdown
       remarkPlugins={[remarkGfm]}
@@ -146,7 +145,7 @@ export function BlogPostDetail({ id }: { id: string }) {
         },
       }}
     >
-      {post.content}
+      {String(post.content).replace(/\\n/g, "\n").replace(/\\t/g, "\t")}
     </ReactMarkdown>
   );
 
