@@ -24,6 +24,9 @@ export const login = async (
 export const setTokenInCookies = (token: string): void => {
   document.cookie = `authToken=${token}; path=/; max-age=259200`; // Store token in cookies
 };
+export const removeTokenInCookies = (): void => {
+  document.cookie = `authToken=; path=/; max-age=0`; // Clear the authToken cookie
+};
 
 export const registerUser = async (userDetail: object): Promise<string> => {
   try {

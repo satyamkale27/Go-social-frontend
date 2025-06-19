@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { getAllUserPosts, getUserById } from "@/actions/fetchAllUserPosts";
 import { toast } from "@/hooks/use-toast";
+import { removeTokenInCookies } from "@/actions/auth";
+import { useRouter } from "next/navigation";
 
 type Post = {
   id: string;
@@ -16,6 +18,7 @@ type Post = {
 };
 
 export function ProfileView() {
+  const router = useRouter();
   type user = {
     id?: string;
     username?: string;
@@ -73,6 +76,15 @@ export function ProfileView() {
     );
 
     return differenceInDays;
+  }
+
+  function handleLogOut() {
+    removeTokenInCookies();
+    toast({
+      title: "Logged Out",
+      description: "You have been successfully logged out.",
+    });
+    router.push("/signin");
   }
 
   const fetchPosts = async () => {
@@ -217,6 +229,7 @@ export function ProfileView() {
             <Button
               variant="destructive"
               className="flex items-center space-x-2 w-full sm:w-auto"
+              onClick={handleLogOut}
             >
               <LogOut className="h-4 w-4" />
               <span>Logout</span>
