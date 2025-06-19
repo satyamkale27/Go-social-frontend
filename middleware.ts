@@ -34,6 +34,5 @@ export const config = {
     "/edit",
     "/post/:path*",
     "/profile",
-    "/activate",
   ],
 };

@@ -45,3 +45,13 @@ export const registerUser = async (userDetail: object): Promise<string> => {
     throw error;
   }
 };
+
+export const activateUserByToken = async (token: string) => {
+  try {
+    const response = await axios.put(
+      `http://localhost:8080/v1/users/activate/${token}`
+    );
+  } catch (error: any) {
+    throw error;
+  }
+};
