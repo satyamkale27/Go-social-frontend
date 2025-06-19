@@ -60,7 +60,7 @@ export function BlogPostDetail({ id }: { id: string }) {
   }, [id]);
 
   const handleAddComment = async () => {
-    if (!newComment.trim()) return;
+    if (!newComment.trim() || !post) return;
 
     try {
       await createComment(post.id, newComment);
@@ -83,6 +83,7 @@ export function BlogPostDetail({ id }: { id: string }) {
   };
 
   const handleFollow = async () => {
+    if (!post) return;
     try {
       await followUserById(post.user_id.toString());
       toast({ title: "Success", description: "Followed successfully" });
