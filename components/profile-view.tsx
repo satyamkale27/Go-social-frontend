@@ -84,7 +84,8 @@ export function ProfileView() {
       title: "Logged Out",
       description: "You have been successfully logged out.",
     });
-    router.push("/signin");
+
+    window.location.href = "/signin";
   }
 
   const fetchPosts = async () => {

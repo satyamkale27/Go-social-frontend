@@ -50,7 +50,7 @@ export function SignInForm() {
     try {
       const token = await login(email, password); // Fetch token
       setTokenInCookies(token); // Store token in cookies
-      router.push("/"); // Redirect to home
+      window.location.href = "/";
       toast({
         title: "Success",
         description: "Logged in successfully!",
