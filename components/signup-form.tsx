@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
-import { registerUser } from "@/actions/auth"; // Import registerUser function
+import { registerUser } from "@/actions/auth";
 import { useRouter } from "next/navigation";
 
 export function SignUpForm() {
@@ -15,11 +15,11 @@ export function SignUpForm() {
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  const [loading, setLoading] = useState(false); // Loader state
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const validateEmail = (value: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Basic email regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(value)) {
       setEmailError("Please enter a valid email address.");
     } else {
@@ -28,7 +28,7 @@ export function SignUpForm() {
   };
 
   const validatePassword = (value: string) => {
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/; // Minimum 8 characters, at least one letter and one number
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
     if (!passwordRegex.test(value)) {
       setPasswordError(
         "Password must be at least 8 characters long and include a number."
@@ -41,7 +41,6 @@ export function SignUpForm() {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate email and password before proceeding
     if (emailError || passwordError) {
       toast({
         title: "Error",
@@ -50,16 +49,16 @@ export function SignUpForm() {
       return;
     }
 
-    setLoading(true); // Show loader
+    setLoading(true);
 
     try {
-      const userDetails = { email, password, username }; // Add other required fields
-      const response = await registerUser(userDetails); // Call registerUser function
+      const userDetails = { email, password, username };
+      const response = await registerUser(userDetails);
       toast({
         title: "Success",
         description: "Account created successfully!",
       });
-      router.push("/signin"); // Redirect to sign-in page
+      router.push("/signin");
     } catch (err: unknown) {
       if (err instanceof Error) {
         toast({
@@ -75,7 +74,7 @@ export function SignUpForm() {
         });
       }
     } finally {
-      setLoading(false); // Hide loader
+      setLoading(false);
     }
   };
 
@@ -156,7 +155,7 @@ export function SignUpForm() {
 
           <Button
             className="w-full bg-cyan-500 hover:bg-cyan-600 text-white py-3 flex items-center justify-center"
-            disabled={loading} // Disable button while loading
+            disabled={loading}
           >
             {loading ? (
               <svg
@@ -182,6 +181,15 @@ export function SignUpForm() {
             ) : null}
             {loading ? "Creating Account..." : "Create Account"}
           </Button>
+
+          {/* 🔔 Email verification note */}
+          <div className="mt-3 text-sm text-gray-600 text-center">
+            After creating your account, please verify your email by clicking
+            the link sent to you. <br className="hidden sm:block" />
+            <span className="font-medium text-gray-800">
+              Check your spam or junk folder if you don't see it.
+            </span>
+          </div>
         </form>
 
         <div className="text-center mt-4 sm:mt-6">
