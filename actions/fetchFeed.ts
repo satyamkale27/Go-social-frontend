@@ -13,13 +13,16 @@ export const fetchUserFeed = async (params: object) => {
       throw new Error("Authorization token not found in cookies.");
     }
 
-    const response = await axios.get("http://localhost:8080/v1/users/feed", {
-      params,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await axios.get(
+      "https://goapi.satyamkale.site/v1/users/feed",
+      {
+        params,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     return response.data;
   } catch (error) {
     throw error;

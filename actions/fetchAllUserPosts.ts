@@ -13,7 +13,7 @@ export const getAllUserPosts = async () => {
     }
 
     const response = await axios.get(
-      "http://localhost:8080/v1/posts/allUserPosts",
+      "https://goapi.satyamkale.site/v1/posts/allUserPosts",
       {
         headers: {
           "Content-Type": "application/json",
@@ -39,7 +39,7 @@ export const deleteUserPostById = async (id: string) => {
     }
 
     const response = await axios.delete(
-      `http://localhost:8080/v1/posts/${id}`,
+      `https://goapi.satyamkale.site/v1/posts/${id}`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -65,12 +65,15 @@ export const getPostById = async (id: string) => {
       throw new Error("Authorization token not found in cookies.");
     }
 
-    const response = await axios.get(`http://localhost:8080/v1/posts/${id}`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await axios.get(
+      `https://goapi.satyamkale.site/v1/posts/${id}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
     if (response.status != 200) throw new Error("Error in Fetching post");
     return response.data;
@@ -91,7 +94,7 @@ export const followUserById = async (id: string) => {
     }
 
     const response = await axios.put(
-      `http://localhost:8080/v1/users/${id}/follow`,
+      `https://goapi.satyamkale.site/v1/users/${id}/follow`,
       {},
       {
         headers: {
@@ -117,7 +120,7 @@ export const createComment = async (id: string, content: string) => {
     }
 
     const response = await axios.post(
-      `http://localhost:8080/v1/posts/${id}/comment`,
+      `https://goapi.satyamkale.site/v1/posts/${id}/comment`,
       { content },
       {
         headers: {
@@ -146,7 +149,7 @@ export const createPost = async (content: object) => {
     }
 
     const response = await axios.post(
-      `http://localhost:8080/v1/posts`,
+      `https://goapi.satyamkale.site/v1/posts`,
       content,
       {
         headers: {
@@ -175,7 +178,7 @@ export const getUserById = async (id: string) => {
     }
 
     const response = await axios.get(
-      `http://localhost:8080/v1/users/${id}`,
+      `https://goapi.satyamkale.site/v1/users/${id}`,
 
       {
         headers: {

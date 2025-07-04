@@ -6,7 +6,7 @@ export const login = async (
 ): Promise<string> => {
   try {
     const response = await axios.post(
-      "http://localhost:8080/v1/authentication/token",
+      "https://goapi.satyamkale.site/v1/authentication/token",
       { email, password },
       {
         headers: {
@@ -31,7 +31,7 @@ export const removeTokenInCookies = (): void => {
 export const registerUser = async (userDetail: object): Promise<string> => {
   try {
     const response = await axios.post(
-      "http://localhost:8080/v1/authentication/user",
+      "https://goapi.satyamkale.site/v1/authentication/user",
       userDetail,
       {
         headers: {
@@ -49,7 +49,7 @@ export const registerUser = async (userDetail: object): Promise<string> => {
 export const activateUserByToken = async (token: string) => {
   try {
     const response = await axios.put(
-      `http://localhost:8080/v1/users/activate/${token}`
+      `https://goapi.satyamkale.site/v1/users/activate/${token}`
     );
   } catch (error: any) {
     throw error;
