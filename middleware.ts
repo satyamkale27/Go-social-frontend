@@ -30,9 +30,9 @@ export const config = {
     "/signup",
     "/signin",
     "/my-posts",
+    "/my-posts/post/:path*",
     "/create",
     "/edit",
-    "/post/:path*",
     "/profile",
   ],
 };
